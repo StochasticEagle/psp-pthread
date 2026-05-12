@@ -58,8 +58,16 @@ pthread_mutex_unlock (pthread_mutex_t * mutex)
   pthread_mutex_t mx;
 
   /*
-   * Let the system deal with invalid pointers.
+   * Reject NULL / uninitialised mutexes explicitly. Most embedded
+   * targets this library runs on don't have signal handling for bad
+   * loads — a NULL deref traps straight into the kernel rather than
+   * surfacing an error to the caller, so the OS layer cannot be
+   * relied on to validate the pointer for us.
    */
+  if (mutex == NULL || *mutex == NULL)
+    {
+      return EINVAL;
+    }
 
   mx = *mutex;
 

@@ -148,6 +148,8 @@ int pthread_test_mutex8e();
 int pthread_test_mutex8n();
 int pthread_test_mutex8r();
 
+int pthread_test_mutex9();
+
 int pthread_test_valid1();
 int pthread_test_valid2();
 

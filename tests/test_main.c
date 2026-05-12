@@ -258,6 +258,9 @@ static void runMutexTests(void)
   printf("Mutex test #8r\n");
   pthread_test_mutex8r();
 
+  printf("Mutex test #9 (NULL / uninitialised handles)\n");
+  pthread_test_mutex9();
+
 }
 
 static void runSpinTests()
