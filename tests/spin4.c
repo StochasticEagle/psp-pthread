@@ -53,6 +53,7 @@ static struct _timeb currSysTimeStop;
 					       - (_TStart.time*1000+_TStart.millitm))
 
 static int washere = 0;
+static long elapsed_msecs = 0;
 
 static void * func(void * arg)
 {
@@ -61,14 +62,16 @@ static void * func(void * arg)
   assert(pthread_spin_lock(&lock) == 0);
   assert(pthread_spin_unlock(&lock) == 0);
   _ftime(&currSysTimeStop);
+  elapsed_msecs = GetDurationMilliSecs(currSysTimeStart, currSysTimeStop);
 
-  return (void *) GetDurationMilliSecs(currSysTimeStart, currSysTimeStop);
+  return NULL;
 }
 
 int pthread_test_spin4()
 {
   lock = PTHREAD_SPINLOCK_INITIALIZER;
-  long result = 0;
+  washere = 0;
+  elapsed_msecs = 0;
   pthread_t t;
   struct _timeb sysTime;
 
@@ -96,8 +99,8 @@ int pthread_test_spin4()
 
   assert(pthread_spin_unlock(&lock) == 0);
 
-  assert(pthread_join(t, (void **) &result) == 0);
-  assert(result > 1000);
+  assert(pthread_join(t, NULL) == 0);
+  assert(elapsed_msecs > 1000);
 
   assert(pthread_spin_destroy(&lock) == 0);
 

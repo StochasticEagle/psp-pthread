@@ -357,7 +357,15 @@ if(PSP_PTHREAD_BUILD_TESTS)
             -fno-strict-aliasing
     )
 
-    target_link_libraries(pthread-test PRIVATE pthread)
+    target_link_libraries(
+        pthread-test
+        PRIVATE
+            pthread
+            pspdebug
+            pspdisplay
+            pspge
+            pspctrl
+    )
 
     create_pbp_file(
         TARGET pthread-test

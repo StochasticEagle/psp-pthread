@@ -1,11 +1,8 @@
 #include "pte_osal.h"
 #include "test.h"
 
-const char * error_string;
-
 int assertE;
 
-///@todo: add cancellable wait for thread end for DSP/BIOS
 ///@todo: look at removing/changing ftime
 
 static void runBarrierTests(void)

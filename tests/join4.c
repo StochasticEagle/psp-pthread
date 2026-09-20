@@ -47,8 +47,6 @@ thr1(void * arg)
 static void *
 thr2(void * arg)
 {
-  int result;
-
   assert(pthread_join(handle1,NULL) == 0);
 
   thread2_status = 1;

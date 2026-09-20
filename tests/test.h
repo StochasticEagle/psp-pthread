@@ -46,8 +46,10 @@
 
 #define OS_MAX_SIMUL_THREADS 10
 
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "pte_osal.h"
 
@@ -55,27 +57,9 @@
 #include "sched.h"
 #include "semaphore.h"
 
-//#include <windows.h>
-
-
 #define PTW32_THREAD_NULL_ID {NULL,0}
 
-#if defined(__MINGW32__)
-#include <stdint.h>
-#elif defined(__BORLANDC__)
-#define int64_t ULONGLONG
-#else
-#define int64_t _int64
-#endif
-
-extern const char * error_string;
-
-
-/*
- * The Mingw32 assert macro calls the CRTDLL _assert function
- * which pops up a dialog. We want to run in batch mode so
- * we define our own assert macro.
- */
+/* Test assertions terminate the PSP test application on failure. */
 #ifdef assert
 # undef assert
 #endif
@@ -88,25 +72,34 @@ extern const char * error_string;
 #endif
 
 # define assert(e) \
-   ((e) ? ((ASSERT_TRACE) ? fprintf(stdout, \
-                                    "Assertion succeeded: (%s), file %s, line %d\n", \
-			            #e, __FILE__, (int) __LINE__), \
-	                            fflush(stdout) : \
-                             0) : \
-          (fprintf(stderr, "Assertion failed: (%s), file %s, line %d\n", \
-                   #e, __FILE__, (int) __LINE__), exit(1), 0))
+  do { \
+    if (!(e)) { \
+      fprintf(stderr, "Assertion failed: (%s), file %s, line %d\n", \
+              #e, __FILE__, (int) __LINE__); \
+      exit(EXIT_FAILURE); \
+    } else if (ASSERT_TRACE) { \
+      fprintf(stdout, "Assertion succeeded: (%s), file %s, line %d\n", \
+              #e, __FILE__, (int) __LINE__); \
+      fflush(stdout); \
+    } \
+  } while (0)
 
 extern int assertE;
 # define assert_e(e, o, r) \
-   (((assertE = e) o (r)) ? ((ASSERT_TRACE) ? fprintf(stdout, \
-                                    "Assertion succeeded: (%s), file %s, line %d\n", \
-			            #e, __FILE__, (int) __LINE__), \
-	                            fflush(stdout) : \
-                             0) : \
-          (fprintf(stderr, "Assertion failed: (%s %s %s), file %s, line %d, error %s\n", \
-                   #e,#o,#r, __FILE__, (int) __LINE__, error_string[assertE]), exit(1), 0))
+  do { \
+    assertE = (e); \
+    if (!(assertE o (r))) { \
+      fprintf(stderr, \
+              "Assertion failed: (%s %s %s), file %s, line %d, error %s\n", \
+              #e, #o, #r, __FILE__, (int) __LINE__, strerror(assertE)); \
+      exit(EXIT_FAILURE); \
+    } else if (ASSERT_TRACE) { \
+      fprintf(stdout, "Assertion succeeded: (%s), file %s, line %d\n", \
+              #e, __FILE__, (int) __LINE__); \
+      fflush(stdout); \
+    } \
+  } while (0)
 
-#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -285,3 +278,5 @@ int pthread_test_exception3();
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
+
+#endif /* _PTHREAD_TEST_H_ */
