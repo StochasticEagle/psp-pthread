@@ -1,0 +1,10 @@
+prefix=${pcfiledir}/../..
+exec_prefix=${prefix}
+libdir=${prefix}/lib
+includedir=${prefix}/include
+
+Name: psp-pthread
+Description: POSIX threads implementation for PlayStation Portable
+Version: 2.8.0.0
+Libs: -L${libdir} -lpthread -lpthreadglue
+Cflags: -I${includedir}

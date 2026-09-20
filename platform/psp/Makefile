@@ -207,3 +207,5 @@ install: $(TARGET_LIB)
 	@install -d $(DESTDIR)/include/bits
 	@install -m644 ../../bits/posix_opt.h $(DESTDIR)/include/bits/
 	@install -m644 ../../semaphore.h $(DESTDIR)/include/
+	@install -d $(DESTDIR)/lib/pkgconfig
+	@install -m644 pthread.pc $(DESTDIR)/lib/pkgconfig/
